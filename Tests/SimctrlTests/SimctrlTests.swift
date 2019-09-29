@@ -3,10 +3,13 @@ import XCTest
 
 final class SimctrlTests: XCTestCase {
     func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(Simctrl().text, "Hello, World!")
+        var arguments = [Argument]()
+        arguments.append(.batteryLevel(50))
+        let subCommand = StatusBarSubCommand(device: Device.booted, arguments: arguments)
+        let tool = SimCtlTool(subCommand: subCommand)
+        let xcrunCommand = XCRunCommand(tool: tool)
+
+        XCTAssertEqual(xcrunCommand.stringRepresentation, "simctl booted --batteryLevel 50")
     }
 
     static var allTests = [
