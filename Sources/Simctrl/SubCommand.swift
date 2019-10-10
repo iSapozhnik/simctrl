@@ -58,7 +58,13 @@ struct DeviceListSubCommand: SubCommand {
 
     let subCommand = "list"
 
+    private var asJSON: Bool
+
+    init(asJSON: Bool = true) {
+        self.asJSON = asJSON
+    }
+
     var stringRepresentation: String {
-        return subCommand
+        return subCommand + (asJSON ? " -j" : "")
     }
 }
