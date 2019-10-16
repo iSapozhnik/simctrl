@@ -48,20 +48,20 @@ public enum WiFiMode: String {
     case active
 }
 
-public enum CellularModeType: String {
+public enum CellularModeType: String, Equatable {
     case notSupported
     case searching
     case failed
     case active
 }
 
-public enum BatteryState: String {
+public enum BatteryState: String, Equatable {
     case charging
     case charged
     case discharging
 }
 
-public enum StatusBarArgument {
+public enum StatusBarArgument: Equatable {
     case batteryLevel(Int)
     case dataNetwork(DataNetworkType)
     case wifiMode(WiFiMode)
