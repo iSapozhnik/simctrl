@@ -41,6 +41,7 @@ public class Simctrl {
         let tool = SimCtlTool(subCommand: subCommand)
         let xcrunCommand = XCRunCommand(tool: tool)
         executor.execute(xcrunCommand)
+        executor.execute(OpenCommand())
     }
 
     public func execute(for dvice: Device = .booted) throws {
