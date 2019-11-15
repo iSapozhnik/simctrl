@@ -68,3 +68,16 @@ struct DeviceListSubCommand: SubCommand {
         return subCommand + (asJSON ? " -j" : "")
     }
 }
+
+struct BootDeviceSubCommand: SubCommand {
+    var device: Device?
+    var arguments: [Argument]?
+    let subCommand = "boot"
+
+    var stringRepresentation: String {
+        guard case let .id(id) = device else {
+            return ""
+        }
+        return "\(subCommand) \(id)"
+    }
+}

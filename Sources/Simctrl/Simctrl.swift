@@ -25,14 +25,22 @@ public class Simctrl {
         return self
     }
 
-    public func deviceList() throws -> [String: [DeviceDescription]] {
+    public func deviceList() throws -> DeviceListResult? {
         createCommandArgumentsIfNeeded()
         let subCommand = DeviceListSubCommand()
         let tool = SimCtlTool(subCommand: subCommand)
         let xcrunCommand = XCRunCommand(tool: tool)
 
-        let parser = DeviceListParser()
-        return parser.parse(string: executor.execute(xcrunCommand))
+        let decoder = DeviceListDecoder()
+        return decoder.decode(string: executor.execute(xcrunCommand))
+    }
+
+    public func boot(device: DeviceElement) throws {
+        createCommandArgumentsIfNeeded()
+        let subCommand = BootDeviceSubCommand(device: Device.id(device.udid), arguments: nil)
+        let tool = SimCtlTool(subCommand: subCommand)
+        let xcrunCommand = XCRunCommand(tool: tool)
+        executor.execute(xcrunCommand)
     }
 
     public func execute() throws {
