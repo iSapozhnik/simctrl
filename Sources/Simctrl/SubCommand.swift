@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+/*
 public protocol SubCommand {
     var device: Device? { get set }
     var arguments: [Argument]? { get set }
@@ -81,3 +81,28 @@ struct BootDeviceSubCommand: SubCommand {
         return "\(subCommand) \(id)"
     }
 }
+
+struct OpenURLSubCommand: SubCommand {
+    var device: Device?
+    var arguments: [Argument]?
+    let subCommand = "openurl"
+    let url: String
+
+    var stringRepresentation: String {
+        var stringComponents = [String]()
+        stringComponents.append(subCommand)
+
+        switch device {
+        case .booted:
+            stringComponents.append("booted")
+        case .id(let idValue):
+            stringComponents.append("\(idValue)")
+        default:
+            stringComponents.append("booted")
+        }
+
+        stringComponents.append(url)
+        return stringComponents.joined(separator: " ")
+    }
+}
+ */

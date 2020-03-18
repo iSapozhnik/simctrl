@@ -7,6 +7,7 @@
 
 import Foundation
 
+/*
 public protocol Tool {
     var subCommand: SubCommand { get set }
     var stringRepresentation: String { get }
@@ -19,3 +20,4 @@ struct SimCtlTool: Tool {
         return ["simctl", subCommand.stringRepresentation].joined(separator: " ")
     }
 }
+*/

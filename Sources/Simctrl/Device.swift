@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Device {
-    case booted
-    case id(String)
-}
+//public enum Device {
+//    case booted
+//    case id(String)
+//}
