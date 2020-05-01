@@ -15,8 +15,13 @@ struct Command {
     }
 
     /// Open a URL in a device.
-    static func openURL(deviceId: String, url: String) -> Command {
-        Command("openurl", arguments: [deviceId, url])
+    static func openURL(deviceId: String?, url: String) -> Command {
+        Command("openurl", arguments: [deviceId ?? "booted", url])
+    }
+
+    /// Boot a device.
+    static func boot(deviceId: String) -> Command {
+        Command("boot", arguments: [deviceId])
     }
 
     /// List available devices, device types, runtimes, or device pairs.

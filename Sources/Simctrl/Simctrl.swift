@@ -3,29 +3,41 @@ import CombineX
 import CXFoundation
 
 public enum Simctrl {
-    public static func openURL(_ simulator: String, URL: String) {
-        CommandExecutor.execute(.openURL(deviceId: simulator, url: URL))
+    public static func acceptXcodeLicense(from url: URL) {
+        CommandExecutor.executeAcceptXcode(from: url) { result in
+            
+        }
     }
 
-    public static func watchDeviceList() -> AnyPublisher<DeviceList, SimctrlError> {
+    public static func openURL(from url: URL, simulator: String? = nil, urlString: String) {
+        CommandExecutor.execute(from: url, command: .openURL(deviceId: simulator, url: urlString))
+    }
+
+    public static func boot(from url: URL, simulator: String) {
+        CommandExecutor.execute(from: url, command: .boot(deviceId: simulator))
+    }
+
+    public static func watchDeviceList(from url: URL) -> AnyPublisher<DeviceList, SimctrlError> {
         return Timer.CX.publish(every: 5, on: .main, in: .common)
             .autoconnect()
             .setFailureType(to: SimctrlError.self)
-            .flatMap { _ in Simctrl.listDevices() }
-            .prepend(Simctrl.listDevices())
+            .flatMap { _ in Simctrl.listDevices(from: url) }
+            .prepend(Simctrl.listDevices(from: url))
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
 
-    public static func listDeviceTypes() -> AnyPublisher<DeviceTypeList, SimctrlError> {
-        CommandExecutor.executeJSON(.list(filter: .devicetypes, flags: [.json]))
+    public static func listDeviceTypes(from url: URL) -> AnyPublisher<DeviceTypeList, SimctrlError> {
+        CommandExecutor.executeJSON(from: url, command: .list(filter: .devicetypes, flags: [.json]))
     }
 
-    public static func listDevices() -> AnyPublisher<DeviceList, SimctrlError> {
-        CommandExecutor.executeJSON(.list(filter: .devices, search: .available, flags: [.json]))
+    public static func listDevices(from url: URL) -> AnyPublisher<DeviceList, SimctrlError> {
+        CommandExecutor.executeJSON(from: url, command: .list(filter: .devices, search: .available, flags: [.json]))
     }
 
-    public static func listRuntimes() -> AnyPublisher<RuntimeList, SimctrlError> {
-        CommandExecutor.executeJSON(.list(filter: .runtimes, flags: [.json]))
+    public static func listRuntimes(from url: URL) -> AnyPublisher<RuntimeList, SimctrlError> {
+        CommandExecutor.executeJSON(from: url, command: .list(filter: .runtimes, flags: [.json]))
     }
+
+
 }

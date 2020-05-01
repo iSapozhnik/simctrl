@@ -31,9 +31,11 @@ fileprivate extension Process {
 }
 
 struct CommandExecutor {
-    static func execute(_ arguments: [String], completion: @escaping (Result<Data, SimctrlError>) -> Void) {
+    static func executeAcceptXcode(from url: URL, completion: @escaping (Result<Data, SimctrlError>) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
-            if let data = Process.execute("/usr/bin/xcrun", arguments: ["simctl"] + arguments) {
+            var xcodebuildUrl = url
+            xcodebuildUrl.appendPathComponent("Contents/Developer/usr/bin/xcodebuild")
+            if let data = Process.execute(xcodebuildUrl.path, arguments: ["-license", "accept"]) {
                 completion(.success(data))
             } else {
                 completion(.failure(SimctrlError.missingCommand))
@@ -41,10 +43,22 @@ struct CommandExecutor {
         }
     }
 
-    static func execute(_ arguments: [String]) -> PassthroughSubject<Data, SimctrlError> {
+    static func execute(from url: URL, arguments: [String], completion: @escaping (Result<Data, SimctrlError>) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            var simctilUrl = url
+            simctilUrl.appendPathComponent("Contents/Developer/usr/bin/simctl")
+            if let data = Process.execute(simctilUrl.path, arguments: arguments) {
+                completion(.success(data))
+            } else {
+                completion(.failure(SimctrlError.missingCommand))
+            }
+        }
+    }
+
+    static func execute(from url: URL, arguments: [String]) -> PassthroughSubject<Data, SimctrlError> {
         let publisher = PassthroughSubject<Data, SimctrlError>()
 
-        execute(arguments) { result in
+        execute(from: url, arguments: arguments) { result in
             switch result {
             case .success(let data):
                 publisher.send(data)
@@ -57,17 +71,17 @@ struct CommandExecutor {
         return publisher
     }
 
-    static func execute(_ command: Command, completion: ((Result<Data, SimctrlError>) -> Void)? = nil) {
-        execute(command.arguments, completion: completion ?? { _ in })
+    static func execute(from url: URL, command: Command, completion: ((Result<Data, SimctrlError>) -> Void)? = nil) {
+        execute(from: url, arguments: command.arguments, completion: completion ?? { _ in })
     }
 
-    static func executeJSON<T: Decodable>(_ command: Command) -> AnyPublisher<T, SimctrlError> {
-        executeAndDecode(command.arguments, decoder: JSONDecoder())
+    static func executeJSON<T: Decodable>(from url: URL, command: Command) -> AnyPublisher<T, SimctrlError> {
+        executeAndDecode(from: url, arguments: command.arguments, decoder: JSONDecoder())
     }
 
-    static func executeAndDecode<Item: Decodable, Decoder: TopLevelDecoder>(_ arguments: [String],
+    static func executeAndDecode<Item: Decodable, Decoder: TopLevelDecoder>(from url: URL, arguments: [String],
                                                                                     decoder: Decoder) -> AnyPublisher<Item, SimctrlError> where Decoder.Input == Data {
-        execute(arguments)
+        execute(from: url, arguments: arguments)
             .decode(type: Item.self, decoder: decoder)
             .mapError({ error -> SimctrlError in
                 if error is DecodingError {
