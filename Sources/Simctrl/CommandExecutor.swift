@@ -28,6 +28,22 @@ fileprivate extension Process {
             return nil
         }
     }
+
+    @objc
+    static func executeProcess(_ command: String, arguments: [String]) -> Process? {
+        let task = Process()
+        task.launchPath = command
+        task.arguments = arguments
+
+
+        do {
+            try task.run()
+            task.waitUntilExit()
+            return task
+        } catch {
+            return nil
+        }
+    }
 }
 
 struct CommandExecutor {
@@ -53,6 +69,12 @@ struct CommandExecutor {
                 completion(.failure(SimctrlError.missingCommand))
             }
         }
+    }
+
+    static func executeProcess(from url: URL, command: Command) -> Process? {
+        var simctilUrl = url
+        simctilUrl.appendPathComponent("Contents/Developer/usr/bin/simctl")
+        return Process.executeProcess(simctilUrl.path, arguments: command.arguments)
     }
 
     static func execute(from url: URL, arguments: [String]) -> PassthroughSubject<Data, SimctrlError> {

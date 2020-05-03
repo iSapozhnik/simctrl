@@ -15,8 +15,8 @@ struct Command {
     }
 
     /// Open a URL in a device.
-    static func openURL(deviceId: String?, url: String) -> Command {
-        Command("openurl", arguments: [deviceId ?? "booted", url])
+    static func openURL(deviceId: String, url: String) -> Command {
+        Command("openurl", arguments: [deviceId, url])
     }
 
     /// Boot a device.
@@ -34,6 +34,11 @@ struct Command {
             arguments.append(contentsOf: search.arguments)
         }
         return Command("list", arguments: arguments + flags.flatMap { $0.arguments })
+    }
+
+//    xcrun simctl io booted recordVideo --codec=h264 --mask=black --force /Users/isapozhnik/Library/Containers/com.heavylightapps.altum/Data/Downloads/appVideo.mov
+    static func recordVideo(deviceId: String, url: String) -> Command {
+        Command("recordVideo", arguments: ["io", "deviceId", "--codec=h264", "--mask=black", "--force", url+"AltumVideo.mov"])
     }
 }
 

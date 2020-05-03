@@ -9,7 +9,11 @@ public enum Simctrl {
         }
     }
 
-    public static func openURL(from url: URL, simulator: String? = nil, urlString: String) {
+    public static func recordVideo(from url: URL, simulator: String, urlString: String) -> Process? {
+        CommandExecutor.executeProcess(from: url, command: .recordVideo(deviceId: simulator, url: urlString))
+    }
+
+    public static func openURL(from url: URL, simulator: String, urlString: String) {
         CommandExecutor.execute(from: url, command: .openURL(deviceId: simulator, url: urlString))
     }
 
@@ -18,7 +22,7 @@ public enum Simctrl {
     }
 
     public static func watchDeviceList(from url: URL) -> AnyPublisher<DeviceList, SimctrlError> {
-        return Timer.CX.publish(every: 5, on: .main, in: .common)
+        return Timer.CX.publish(every: 60, on: .main, in: .common)
             .autoconnect()
             .setFailureType(to: SimctrlError.self)
             .flatMap { _ in Simctrl.listDevices(from: url) }
