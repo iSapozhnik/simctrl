@@ -24,7 +24,8 @@ fileprivate extension Process {
             try task.run()
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
             return data
-        } catch {
+        } catch let error {
+            print(error.localizedDescription)
             return nil
         }
     }

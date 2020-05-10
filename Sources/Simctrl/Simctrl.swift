@@ -4,9 +4,7 @@ import CXFoundation
 
 public enum Simctrl {
     public static func acceptXcodeLicense(from url: URL) {
-        CommandExecutor.executeAcceptXcode(from: url) { result in
-            
-        }
+    
     }
 
     public static func recordVideo(from url: URL, simulator: String, urlString: String) -> Process? {
@@ -22,7 +20,7 @@ public enum Simctrl {
     }
 
     public static func watchDeviceList(from url: URL) -> AnyPublisher<DeviceList, SimctrlError> {
-        return Timer.CX.publish(every: 60, on: .main, in: .common)
+        return Timer.CX.publish(every: 5, on: .main, in: .common)
             .autoconnect()
             .setFailureType(to: SimctrlError.self)
             .flatMap { _ in Simctrl.listDevices(from: url) }
